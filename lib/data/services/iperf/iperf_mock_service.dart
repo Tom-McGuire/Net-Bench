@@ -24,9 +24,10 @@ class IPerfMockService {
 
     int currentSecond = 0;
     final is10G = config.streams >= 16;
-    final baseTargetMbps = config.isUdp
-        ? config.udpBandwidthMbps.toDouble()
-        : (is10G ? 9350.0 : 942.0);
+    final baseTargetMbps = (config.isUdp
+            ? config.udpBandwidthMbps.toDouble()
+            : (is10G ? 9350.0 : 942.0)) *
+        (config.isBidirectional ? 2.0 : 1.0);
 
     final baselinePing = 8.0 + random.nextDouble() * 4.0; // 8 - 12 ms
 

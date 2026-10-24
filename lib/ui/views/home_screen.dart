@@ -731,6 +731,7 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
+                    key: ValueKey('proto_${benchVm.config.protocol}'),
                     isExpanded: true,
                     initialValue: benchVm.config.protocol,
                     decoration: const InputDecoration(
@@ -753,6 +754,7 @@ class _HomeScreenState extends State<HomeScreen>
                 const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButtonFormField<int>(
+                    key: ValueKey('streams_${benchVm.config.streams}'),
                     isExpanded: true,
                     initialValue: benchVm.config.streams,
                     decoration: const InputDecoration(
@@ -780,6 +782,7 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
+                    key: ValueKey('direction_${benchVm.config.direction}'),
                     isExpanded: true,
                     initialValue: benchVm.config.direction,
                     decoration: const InputDecoration(
@@ -807,6 +810,7 @@ class _HomeScreenState extends State<HomeScreen>
                 const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButtonFormField<int>(
+                    key: ValueKey('duration_${benchVm.config.durationSeconds}'),
                     isExpanded: true,
                     initialValue: benchVm.config.durationSeconds,
                     decoration: const InputDecoration(
@@ -834,6 +838,7 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
+                    key: ValueKey('bind_${benchVm.config.bindAddress}'),
                     isExpanded: true,
                     initialValue: benchVm.config.bindAddress ?? '0.0.0.0',
                     decoration: const InputDecoration(

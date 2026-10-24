@@ -83,7 +83,11 @@ class BenchmarkRepository {
       return _activeMock!.sampleStream;
     } else {
       _activeClient = IPerfClientService();
-      _activeClient!.execute(_binaryInfo.path!, config);
+      _activeClient!.execute(
+        _binaryInfo.path!,
+        config,
+        supportsJsonStream: _binaryInfo.supportsJsonStream,
+      );
 
       _activeClient!.resultFuture.then((res) {
         try {
