@@ -51,6 +51,15 @@ A modern, high-performance cross-platform Flutter desktop application (**Windows
 
 ---
 
+## ⚠️ Note on Windows / macOS Security Prompts
+
+These tools are free and independent projects and are not yet code-signed with expensive commercial certificates:
+
+- **Windows**: If SmartScreen appears, click **"More info"** → **"Run anyway"**.
+- **macOS**: Right-click the `.app` file, select **Open**, and confirm the prompt (or run `xattr -c NetBench.app` in Terminal).
+
+---
+
 ## Building from Source
 
 ### Prerequisites
