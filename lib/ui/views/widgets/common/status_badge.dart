@@ -28,13 +28,17 @@ class StatusBadge extends StatelessWidget {
             Icon(icon, size: 12, color: color),
             const SizedBox(width: 5),
           ],
-          Text(
-            label.toUpperCase(),
-            style: TextStyle(
-              color: color,
-              fontSize: 10.5,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
+          Flexible(
+            child: Text(
+              label.toUpperCase(),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                color: color,
+                fontSize: 10.5,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
         ],

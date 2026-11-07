@@ -54,6 +54,7 @@ class BenchmarkConfig {
     String? profileName,
     bool? isDemoMode,
     String? bindAddress,
+    bool clearBindAddress = false,
   }) {
     return BenchmarkConfig(
       targetHost: targetHost ?? this.targetHost,
@@ -67,7 +68,7 @@ class BenchmarkConfig {
       intervalSeconds: intervalSeconds ?? this.intervalSeconds,
       profileName: profileName ?? this.profileName,
       isDemoMode: isDemoMode ?? this.isDemoMode,
-      bindAddress: bindAddress ?? this.bindAddress,
+      bindAddress: clearBindAddress ? null : (bindAddress ?? this.bindAddress),
     );
   }
 

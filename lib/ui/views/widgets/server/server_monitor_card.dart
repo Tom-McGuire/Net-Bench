@@ -84,155 +84,159 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header & Controls
-          Row(
-            children: [
-              const Icon(Icons.dns, size: 16, color: AppTheme.primaryLight),
-              const SizedBox(width: 8),
-              const Text(
-                'LOCAL IPERF3 SERVER DAEMON',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 12),
-              StatusBadge(
-                label: isRunning
-                    ? (state.isSimulated ? 'LISTENING (DEMO)' : 'LISTENING')
-                    : 'STOPPED',
-                color: isRunning ? AppTheme.success : Colors.white38,
-                icon: isRunning ? Icons.check_circle : Icons.stop_circle_outlined,
-              ),
-              if (widget.isOlderThan3191) ...[
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.dns, size: 16, color: AppTheme.primaryLight),
                 const SizedBox(width: 8),
-                const StatusBadge(
-                  label: 'iPerf < 3.19.1 (Vulnerable)',
-                  color: AppTheme.warning,
-                  icon: Icons.security_update_warning,
-                ),
-              ],
-              const Spacer(),
-              // Bind Address Dropdown & Refresh
-              Container(
-                height: 32,
-                padding: const EdgeInsets.only(left: 8, right: 2),
-                decoration: BoxDecoration(
-                  color: AppTheme.surfaceHigh,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: AppTheme.border),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.settings_ethernet,
-                        size: 14, color: AppTheme.primaryLight),
-                    const SizedBox(width: 6),
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: serverVm.bindAddress,
-                        isDense: true,
-                        style: AppTheme.monoStyle(fontSize: 11),
-                        dropdownColor: AppTheme.surfaceHigh,
-                        onChanged: isRunning
-                            ? null
-                            : (val) {
-                                if (val != null) serverVm.setBindAddress(val);
-                              },
-                        items: adapterItems.map((adapter) {
-                          return DropdownMenuItem<String>(
-                            value: adapter.ipAddress,
-                            child: Text(
-                              adapter.displayName,
-                              style: AppTheme.monoStyle(fontSize: 11),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.refresh,
-                          size: 13, color: Colors.white60),
-                      tooltip: 'Refresh network adapters',
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 24, minHeight: 24),
-                      visualDensity: VisualDensity.compact,
-                      onPressed:
-                          isRunning ? null : () => serverVm.loadAdapters(),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              // One-Off Toggle
-              Tooltip(
-                message: 'Exit after handling a single benchmark test (-1)',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Checkbox(
-                      value: serverVm.oneOff,
-                      onChanged: isRunning
-                          ? null
-                          : (val) {
-                              if (val != null) serverVm.setOneOff(val);
-                            },
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    const Text(
-                      'One-off (-1)',
-                      style: TextStyle(fontSize: 11, color: Colors.white70),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              // Port Input
-              SizedBox(
-                width: 90,
-                height: 32,
-                child: TextField(
-                  enabled: !isRunning,
-                  decoration: const InputDecoration(
-                    labelText: 'PORT',
-                    labelStyle: TextStyle(fontSize: 10),
-                    isDense: true,
+                const Text(
+                  'LOCAL IPERF3 SERVER DAEMON',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                    color: Colors.white,
                   ),
-                  style: AppTheme.monoStyle(fontSize: 11),
-                  controller: _portController,
-                  keyboardType: TextInputType.number,
-                  onChanged: (val) {
-                    final p = int.tryParse(val);
-                    if (p != null) serverVm.setPort(p);
-                  },
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Start / Stop Toggle Button
-              FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  backgroundColor:
-                      isRunning ? AppTheme.error : AppTheme.success,
-                  foregroundColor: Colors.white,
-                  visualDensity: VisualDensity.compact,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                const SizedBox(width: 12),
+                StatusBadge(
+                  label: isRunning
+                      ? (state.isSimulated ? 'LISTENING (DEMO)' : 'LISTENING')
+                      : 'STOPPED',
+                  color: isRunning ? AppTheme.success : Colors.white38,
+                  icon: isRunning ? Icons.check_circle : Icons.stop_circle_outlined,
                 ),
-                onPressed: () => serverVm.toggleServer(),
-                icon: Icon(
-                  isRunning ? Icons.stop : Icons.play_arrow,
-                  size: 15,
+                if (widget.isOlderThan3191) ...[
+                  const SizedBox(width: 8),
+                  const StatusBadge(
+                    label: 'iPerf < 3.19.1 (Vulnerable)',
+                    color: AppTheme.warning,
+                    icon: Icons.security_update_warning,
+                  ),
+                ],
+                const SizedBox(width: 24),
+                // Bind Address Dropdown & Refresh
+                      Container(
+                        height: 32,
+                        padding: const EdgeInsets.only(left: 8, right: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.surfaceHigh,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: AppTheme.border),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.settings_ethernet,
+                                size: 14, color: AppTheme.primaryLight),
+                            const SizedBox(width: 6),
+                            DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: serverVm.bindAddress,
+                                isDense: true,
+                                style: AppTheme.monoStyle(fontSize: 11),
+                                dropdownColor: AppTheme.surfaceHigh,
+                                onChanged: isRunning
+                                    ? null
+                                    : (val) {
+                                        if (val != null) serverVm.setBindAddress(val);
+                                      },
+                                items: adapterItems.map((adapter) {
+                                  return DropdownMenuItem<String>(
+                                    value: adapter.ipAddress,
+                                    child: Text(
+                                      adapter.displayName,
+                                      style: AppTheme.monoStyle(fontSize: 11),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh,
+                                  size: 13, color: Colors.white60),
+                              tooltip: 'Refresh network adapters',
+                              padding: EdgeInsets.zero,
+                              constraints:
+                                  const BoxConstraints(minWidth: 24, minHeight: 24),
+                              visualDensity: VisualDensity.compact,
+                              onPressed:
+                                  isRunning ? null : () => serverVm.loadAdapters(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // One-Off Toggle
+                      Tooltip(
+                        message: 'Exit after handling a single benchmark test (-1)',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Checkbox(
+                              value: serverVm.oneOff,
+                              onChanged: isRunning
+                                  ? null
+                                  : (val) {
+                                      if (val != null) serverVm.setOneOff(val);
+                                    },
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            const Text(
+                              'One-off (-1)',
+                              style: TextStyle(fontSize: 11, color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Port Input
+                      SizedBox(
+                        width: 90,
+                        height: 32,
+                        child: TextField(
+                          enabled: !isRunning,
+                          decoration: const InputDecoration(
+                            labelText: 'PORT',
+                            labelStyle: TextStyle(fontSize: 10),
+                            isDense: true,
+                          ),
+                          style: AppTheme.monoStyle(fontSize: 11),
+                          controller: _portController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (val) {
+                            final p = int.tryParse(val);
+                            if (p != null) serverVm.setPort(p);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Start / Stop Toggle Button
+                      FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor:
+                              isRunning ? AppTheme.error : AppTheme.success,
+                          foregroundColor: Colors.white,
+                          visualDensity: VisualDensity.compact,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                        onPressed: () => serverVm.toggleServer(),
+                        icon: Icon(
+                          isRunning ? Icons.stop : Icons.play_arrow,
+                          size: 15,
+                        ),
+                        label: Text(
+                          isRunning ? 'STOP SERVER' : 'START SERVER',
+                          style: const TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                label: Text(
-                  isRunning ? 'STOP SERVER' : 'START SERVER',
-                  style: const TextStyle(
-                      fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
           // Error Alert Banner
           if (state.error != null) ...[
             const SizedBox(height: 8),

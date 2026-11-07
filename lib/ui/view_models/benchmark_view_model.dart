@@ -143,9 +143,11 @@ class BenchmarkViewModel extends ChangeNotifier {
     }
   }
 
+  bool _isDisposed = false;
+
   void setBindAddress(String? address) {
     if (address == null || address.isEmpty || address == '0.0.0.0') {
-      _config = _config.copyWith(bindAddress: null);
+      _config = _config.copyWith(clearBindAddress: true);
     } else {
       _config = _config.copyWith(bindAddress: address.trim());
     }
@@ -366,7 +368,14 @@ class BenchmarkViewModel extends ChangeNotifier {
       repository.exportJson(result);
 
   @override
+  void notifyListeners() {
+    if (_isDisposed) return;
+    super.notifyListeners();
+  }
+
+  @override
   void dispose() {
+    _isDisposed = true;
     _sampleSub?.cancel();
     _nodesSub?.cancel();
     super.dispose();

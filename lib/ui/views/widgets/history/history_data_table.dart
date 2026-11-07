@@ -86,7 +86,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
             controller: _horizontalController,
             scrollDirection: Axis.horizontal,
             child: SizedBox(
-              width: 1080,
+              width: 1100,
               child: Column(
                 children: [
                   // Table Header
