@@ -9,6 +9,7 @@ import 'package:net_bench/domain/models/network_adapter.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 import 'package:net_bench/ui/view_models/benchmark_view_model.dart';
 import 'package:net_bench/ui/view_models/server_view_model.dart';
+import 'package:net_bench/ui/views/dialogs/device_library_dialog.dart';
 import 'package:net_bench/ui/views/dialogs/installation_guide_dialog.dart';
 import 'package:net_bench/ui/views/dialogs/settings_dialog.dart';
 import 'package:net_bench/ui/views/widgets/chart/live_throughput_chart.dart';
@@ -87,6 +88,10 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  void _openDeviceLibrary(BenchmarkViewModel vm) {
+    DeviceLibraryDialog.show(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final benchVm = context.watch<BenchmarkViewModel>();
@@ -133,183 +138,445 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  // Tier 1: Top Control Bar
+  // Tier 1: Top Control Bar (Standardized 52px 5-Zone Architecture)
   Widget _buildTopControlBar(
       BenchmarkViewModel benchVm, ServerViewModel serverVm) {
     final isServerActive = serverVm.isRunning;
 
     return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      color: AppTheme.surface,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            // Branding
-            Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppTheme.border),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Image.asset(
-                'assets/icons/app_icon.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'NET-BENCH',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  'Local Network Benchmarker & iPerf3 Station',
-                  style: TextStyle(fontSize: 10, color: Colors.white54),
-                ),
-              ],
-            ),
-            const SizedBox(width: 24),
+      height: 52,
+      decoration: const BoxDecoration(
+        color: Color(0xFF1E1E1E),
+        border: Border(bottom: BorderSide(color: Color(0xFF2C2C2C), width: 1)),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availWidth =
+              constraints.maxWidth.isFinite ? constraints.maxWidth : 1280.0;
+          const minRequiredWidth = 2500.0;
+          final contentWidth =
+              availWidth > minRequiredWidth ? availWidth : minRequiredWidth;
 
-            // Workspace Tab Switcher
-            Container(
-              height: 30,
-              decoration: BoxDecoration(
-                color: AppTheme.scaffoldBg,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppTheme.border),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: BoxDecoration(
-                  color: AppTheme.primary,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                dividerColor: Colors.transparent,
-                labelPadding: const EdgeInsets.symmetric(horizontal: 12),
-                labelStyle: const TextStyle(
-                    fontSize: 11, fontWeight: FontWeight.bold),
-                unselectedLabelColor: Colors.white60,
-                labelColor: Colors.white,
-                tabs: [
-                  const Tab(text: 'LIVE BENCHMARK'),
-                  Tab(text: 'HISTORY (${benchVm.historicalRuns.length})'),
-                  Tab(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text('SERVER DAEMON'),
-                        if (isServerActive) ...[
-                          const SizedBox(width: 6),
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: AppTheme.success,
-                              shape: BoxShape.circle,
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SizedBox(
+              width: contentWidth - 32,
+              height: 52,
+              child: Row(
+                children: [
+                  // ==================== ZONE 1: BRANDING ====================
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: AppTheme.border),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.asset(
+                      'assets/icons/app_icon.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(Icons.speed,
+                            color: AppTheme.primaryLight, size: 18),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'NET-BENCH',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.8,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'Local Network Benchmarker & iPerf3 Station',
+                        style: TextStyle(fontSize: 10, color: Colors.white54),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+
+                  // ==================== ZONE 2: INTERFACE & TARGET ====================
+                  Container(
+                    height: 32,
+                    width: 190,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF252526),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFF3E3E42)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: () {
+                          final current =
+                              benchVm.config.bindAddress ?? '0.0.0.0';
+                          final items = benchVm.availableAdapters.toList();
+                          if (items.any((a) => a.ipAddress == current)) {
+                            return current;
+                          }
+                          return '0.0.0.0';
+                        }(),
+                        isDense: true,
+                        icon: const Icon(Icons.arrow_drop_down, size: 18),
+                        dropdownColor: const Color(0xFF252526),
+                        style:
+                            const TextStyle(fontSize: 11, color: Colors.white70),
+                        onChanged: benchVm.isRunning
+                            ? null
+                            : (val) => benchVm.setBindAddress(val),
+                        items: () {
+                          final items = benchVm.availableAdapters.toList();
+                          if (benchVm.config.bindAddress != null &&
+                              !items.any((a) =>
+                                  a.ipAddress == benchVm.config.bindAddress)) {
+                            items.add(NetworkAdapter(
+                              name: 'Custom',
+                              ipAddress: benchVm.config.bindAddress!,
+                            ));
+                          }
+                          return items.map((adapter) {
+                            return DropdownMenuItem<String>(
+                              value: adapter.ipAddress,
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.settings_ethernet,
+                                      size: 14, color: AppTheme.primaryLight),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      adapter.displayName,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList();
+                        }(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(Icons.refresh, size: 16),
+                    tooltip: 'Refresh Interfaces',
+                    visualDensity: VisualDensity.compact,
+                    onPressed:
+                        benchVm.isRunning ? null : () => benchVm.loadAdapters(),
+                  ),
+                  const SizedBox(width: 10),
+
+                  // Workspace Tab Switcher
+                  Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: AppTheme.scaffoldBg,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: AppTheme.border),
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicator: BoxDecoration(
+                        color: AppTheme.primary,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      dividerColor: Colors.transparent,
+                      labelPadding:
+                          const EdgeInsets.symmetric(horizontal: 10),
+                      labelStyle: const TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.bold),
+                      unselectedLabelColor: Colors.white60,
+                      labelColor: Colors.white,
+                      tabs: [
+                        const Tab(text: 'LIVE BENCHMARK'),
+                        Tab(text: 'HISTORY (${benchVm.historicalRuns.length})'),
+                        Tab(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('SERVER DAEMON'),
+                              if (isServerActive) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: AppTheme.success,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // ==================== ZONE 3: PRIMARY ACTIONS ====================
+                  FilledButton.icon(
+                    onPressed: () {
+                      if (benchVm.isRunning) {
+                        benchVm.stopBenchmark();
+                      } else {
+                        benchVm.startBenchmark();
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: benchVm.isRunning
+                          ? const Color(0xFFEF4444) // Active Red
+                          : const Color(0xFF10B981), // Idle Emerald Green (from ARP Scout)
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
+                    ),
+                    icon: Icon(
+                      benchVm.isRunning ? Icons.stop : Icons.play_arrow,
+                      size: 17,
+                    ),
+                    label: Text(
+                      benchVm.isRunning ? 'STOP' : 'START TEST',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Server Quick Pill
+                  InkWell(
+                    onTap: () => serverVm.toggleServer(),
+                    borderRadius: BorderRadius.circular(6),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: isServerActive
+                            ? AppTheme.success.withValues(alpha: 0.15)
+                            : AppTheme.surfaceHighest,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isServerActive
+                              ? AppTheme.success
+                              : AppTheme.border,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isServerActive
+                                ? Icons.radio_button_checked
+                                : Icons.dns,
+                            size: 13,
+                            color: isServerActive
+                                ? AppTheme.success
+                                : Colors.white60,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            isServerActive
+                                ? (serverVm.state.isSimulated
+                                    ? 'SERVER: DEMO'
+                                    : 'SERVER ON :${serverVm.port}')
+                                : 'SERVER OFF',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.bold,
+                              color: isServerActive
+                                  ? AppTheme.success
+                                  : Colors.white70,
                             ),
                           ),
                         ],
-                      ],
+                      ),
+                    ),
+                  ),
+
+                  const Spacer(),
+
+                  // ==================== ZONE 4: ECOSYSTEM & DEMO ====================
+                  // Device Library
+                  OutlinedButton.icon(
+                    onPressed: () => _openDeviceLibrary(benchVm),
+                    icon: const Icon(Icons.devices, size: 15),
+                    label: const Text('Device Library',
+                        style: TextStyle(fontSize: 11)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Load Demo
+                  OutlinedButton.icon(
+                    onPressed: benchVm.isRunning
+                        ? null
+                        : () => benchVm.setDemoMode(!benchVm.isDemoMode),
+                    icon: const Icon(Icons.play_circle_outline, size: 15),
+                    label: Text(
+                      benchVm.isDemoMode ? 'Demo Active' : 'Load Demo',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: benchVm.isDemoMode ? AppTheme.warning : null,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
+                      side: benchVm.isDemoMode
+                          ? const BorderSide(color: AppTheme.warning)
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Binary or Demo Pill
+                  StatusBadge(
+                    label: benchVm.isDemoMode
+                        ? 'DEMO'
+                        : (benchVm.binaryInfo.isAvailable
+                            ? 'IPERF3'
+                            : 'NO BINARY'),
+                    color: benchVm.isDemoMode
+                        ? AppTheme.warning
+                        : (benchVm.binaryInfo.isAvailable
+                            ? AppTheme.success
+                            : AppTheme.error),
+                    icon: benchVm.isDemoMode
+                        ? Icons.science
+                        : (benchVm.binaryInfo.isAvailable
+                            ? Icons.check
+                            : Icons.error_outline),
+                  ),
+                  const SizedBox(width: 4),
+
+                  // Help & Settings
+                  IconButton(
+                    icon: const Icon(Icons.help_outline, size: 16),
+                    tooltip: 'iPerf3 Installation Guide & Help',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => _openInstallGuide(benchVm),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.settings, size: 16),
+                    tooltip: 'Settings',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => _openSettings(benchVm),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // ==================== ZONE 5: CLEAR & EXPORT ====================
+                  OutlinedButton.icon(
+                    onPressed:
+                        (benchVm.isRunning || benchVm.historicalRuns.isEmpty)
+                            ? null
+                            : () => benchVm.clearAllHistory(),
+                    icon: const Icon(Icons.delete_sweep_outlined, size: 15),
+                    label: const Text('Clear', style: TextStyle(fontSize: 11)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  PopupMenuButton<String>(
+                    tooltip: 'Export',
+                    enabled: benchVm.historicalRuns.isNotEmpty ||
+                        benchVm.lastCompletedResult != null,
+                    onSelected: (val) {
+                      final target = benchVm.selectedInspectorRecord ??
+                          benchVm.lastCompletedResult ??
+                          (benchVm.historicalRuns.isNotEmpty
+                              ? benchVm.historicalRuns.first
+                              : null);
+                      if (target == null) return;
+                      if (val == 'csv') {
+                        benchVm.exportCsv(target);
+                      } else if (val == 'json') {
+                        benchVm.exportJson(target);
+                      }
+                    },
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(
+                        value: 'csv',
+                        child: Row(
+                          children: [
+                            Icon(Icons.table_chart_outlined, size: 15),
+                            SizedBox(width: 8),
+                            Text('Export CSV', style: TextStyle(fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'json',
+                        child: Row(
+                          children: [
+                            Icon(Icons.code, size: 15),
+                            SizedBox(width: 8),
+                            Text('Export JSON', style: TextStyle(fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                    ],
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 7),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFF2C2C2C)),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.download, size: 15, color: Colors.white70),
+                          SizedBox(width: 6),
+                          Text('Export',
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.white70)),
+                          Icon(Icons.arrow_drop_down,
+                              size: 14, color: Colors.white70),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(width: 24),
-
-            // Server Quick Pill
-            InkWell(
-              onTap: () => serverVm.toggleServer(),
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isServerActive
-                      ? AppTheme.success.withValues(alpha: 0.15)
-                      : AppTheme.surfaceHighest,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isServerActive ? AppTheme.success : AppTheme.border,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      isServerActive ? Icons.radio_button_checked : Icons.dns,
-                      size: 12,
-                      color: isServerActive ? AppTheme.success : Colors.white60,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      isServerActive
-                          ? (serverVm.state.isSimulated
-                              ? 'SERVER: DEMO'
-                              : 'SERVER ON :${serverVm.port}')
-                          : 'SERVER OFF',
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.bold,
-                        color: isServerActive ? AppTheme.success : Colors.white70,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-
-            // Binary or Demo Pill
-            StatusBadge(
-              label: benchVm.isDemoMode
-                  ? 'DEMO SIMULATION'
-                  : (benchVm.binaryInfo.isAvailable ? 'IPERF3 READY' : 'NO BINARY'),
-              color: benchVm.isDemoMode
-                  ? AppTheme.warning
-                  : (benchVm.binaryInfo.isAvailable
-                      ? AppTheme.success
-                      : AppTheme.error),
-              icon: benchVm.isDemoMode
-                  ? Icons.science
-                  : (benchVm.binaryInfo.isAvailable
-                      ? Icons.check
-                      : Icons.error_outline),
-            ),
-            const SizedBox(width: 6),
-
-            // Installation Guide Button
-            IconButton(
-              icon: const Icon(Icons.help_outline, size: 16),
-              tooltip: 'iPerf3 Installation Guide & Help',
-              visualDensity: VisualDensity.compact,
-              onPressed: () => _openInstallGuide(benchVm),
-            ),
-            const SizedBox(width: 4),
-
-            // Settings Button
-            IconButton(
-              icon: const Icon(Icons.settings, size: 16),
-              tooltip: 'Settings',
-              visualDensity: VisualDensity.compact,
-              onPressed: () => _openSettings(benchVm),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -523,33 +790,6 @@ class _HomeScreenState extends State<HomeScreen>
                       style: TextStyle(fontSize: 10, color: Colors.white70)),
                 ),
               ),
-
-            // Start / Stop Benchmark Trigger
-            FilledButton.icon(
-              style: FilledButton.styleFrom(
-                backgroundColor:
-                    benchVm.isRunning ? AppTheme.error : AppTheme.primary,
-                foregroundColor: Colors.white,
-                visualDensity: VisualDensity.compact,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              ),
-              onPressed: () {
-                if (benchVm.isRunning) {
-                  benchVm.stopBenchmark();
-                } else {
-                  benchVm.startBenchmark();
-                }
-              },
-              icon: Icon(
-                benchVm.isRunning ? Icons.stop : Icons.play_arrow,
-                size: 16,
-              ),
-              label: Text(
-                benchVm.isRunning ? 'STOP' : 'START TEST',
-                style: const TextStyle(
-                    fontSize: 11, fontWeight: FontWeight.bold),
-              ),
-            ),
           ],
         ),
       ),
@@ -829,60 +1069,6 @@ class _HomeScreenState extends State<HomeScreen>
                             if (val != null) benchVm.setDuration(val);
                           },
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // Bind Adapter Row
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    key: ValueKey('bind_${benchVm.config.bindAddress}'),
-                    isExpanded: true,
-                    initialValue: benchVm.config.bindAddress ?? '0.0.0.0',
-                    decoration: const InputDecoration(
-                      labelText: 'BIND LOCAL ADAPTER (OPTIONAL -B)',
-                      labelStyle: TextStyle(fontSize: 10),
-                      prefixIcon: Icon(Icons.settings_ethernet, size: 14),
-                    ),
-                    dropdownColor: AppTheme.surfaceHigh,
-                    style: AppTheme.monoStyle(fontSize: 11),
-                    items: () {
-                      final items = benchVm.availableAdapters.toList();
-                      if (benchVm.config.bindAddress != null &&
-                          !items.any((a) =>
-                              a.ipAddress == benchVm.config.bindAddress)) {
-                        items.add(NetworkAdapter(
-                          name: 'Custom',
-                          ipAddress: benchVm.config.bindAddress!,
-                        ));
-                      }
-                      return items.map((adapter) {
-                        return DropdownMenuItem<String>(
-                          value: adapter.ipAddress,
-                          child: Text(
-                            adapter.displayName,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList();
-                    }(),
-                    onChanged: benchVm.isRunning
-                        ? null
-                        : (val) {
-                            benchVm.setBindAddress(val);
-                          },
-                  ),
-                ),
-                const SizedBox(width: 6),
-                IconButton(
-                  icon: const Icon(Icons.refresh,
-                      size: 14, color: Colors.white60),
-                  tooltip: 'Refresh network adapters',
-                  visualDensity: VisualDensity.compact,
-                  onPressed:
-                      benchVm.isRunning ? null : () => benchVm.loadAdapters(),
                 ),
               ],
             ),
