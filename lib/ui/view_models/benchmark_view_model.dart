@@ -6,16 +6,22 @@ import '../../domain/models/benchmark_config.dart';
 import '../../domain/models/benchmark_preset.dart';
 import '../../domain/models/benchmark_result.dart';
 import '../../domain/models/discovered_node.dart';
+import '../../domain/models/launch_adapter_config.dart';
 import '../../domain/models/live_sample.dart';
 import '../../domain/models/network_adapter.dart';
 import '../../domain/models/network_validator.dart';
 
 class BenchmarkViewModel extends ChangeNotifier {
-  BenchmarkViewModel({required this.repository}) {
+  BenchmarkViewModel({
+    required this.repository,
+    this.initialAdapterConfig,
+  }) {
     _init();
   }
 
   final BenchmarkRepository repository;
+  final LaunchAdapterConfig? initialAdapterConfig;
+  bool _startupAdapterApplied = false;
 
   // Active Configuration & Preset
   BenchmarkConfig _config = const BenchmarkConfig();
@@ -139,6 +145,15 @@ class BenchmarkViewModel extends ChangeNotifier {
         ),
         ...list.where((a) => a.ipAddress != '0.0.0.0'),
       ];
+      if (!_startupAdapterApplied &&
+          initialAdapterConfig != null &&
+          initialAdapterConfig!.hasOverride) {
+        _startupAdapterApplied = true;
+        final matched = initialAdapterConfig!.matchAdapter(_availableAdapters);
+        if (matched != null) {
+          _config = _config.copyWith(bindAddress: matched.ipAddress);
+        }
+      }
       notifyListeners();
     }
   }

@@ -1,15 +1,21 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:net_bench/data/repositories/benchmark_repository.dart';
+import 'package:net_bench/domain/models/launch_adapter_config.dart';
 import 'package:net_bench/domain/models/network_adapter.dart';
 import 'package:net_bench/domain/models/server_state.dart';
 
 class ServerViewModel extends ChangeNotifier {
-  ServerViewModel({required this.repository}) {
+  ServerViewModel({
+    required this.repository,
+    this.initialAdapterConfig,
+  }) {
     _init();
   }
 
   final BenchmarkRepository repository;
+  final LaunchAdapterConfig? initialAdapterConfig;
+  bool _startupAdapterApplied = false;
   ServerState _state = const ServerState();
   StreamSubscription<ServerState>? _stateSub;
 
@@ -46,6 +52,15 @@ class ServerViewModel extends ChangeNotifier {
     final list = await repository.getNetworkAdapters();
     if (list.isNotEmpty) {
       _availableAdapters = list;
+      if (!_startupAdapterApplied &&
+          initialAdapterConfig != null &&
+          initialAdapterConfig!.hasOverride) {
+        _startupAdapterApplied = true;
+        final matched = initialAdapterConfig!.matchAdapter(_availableAdapters);
+        if (matched != null) {
+          _bindAddress = matched.ipAddress;
+        }
+      }
       notifyListeners();
     }
   }
