@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../view_models/benchmark_view_model.dart';
@@ -65,7 +65,7 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
       backgroundColor: AppTheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: AppTheme.border),
+        side: BorderSide(color: AppTheme.border),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720, maxHeight: 600),
@@ -77,9 +77,9 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
               // Header
               Row(
                 children: [
-                  const Icon(Icons.devices, color: AppTheme.primaryLight, size: 22),
+                  Icon(Icons.devices, color: AppTheme.primaryLight, size: 22),
                   const SizedBox(width: 10),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -88,18 +88,18 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.6,
-                          color: Colors.white,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       Text(
                         'Select discovered network nodes or historical targets for benchmarking',
-                        style: TextStyle(fontSize: 11, color: Colors.white54),
+                        style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                       ),
                     ],
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close, size: 18),
+                    icon: Icon(Icons.close, size: 18, color: AppTheme.textSecondary),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -114,15 +114,15 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
                       height: 34,
                       child: TextField(
                         controller: _searchController,
-                        style: const TextStyle(fontSize: 12),
+                        style: TextStyle(fontSize: 12, color: AppTheme.textPrimary),
                         decoration: InputDecoration(
                           hintText: 'Search IP, hostname...',
                           hintStyle:
-                              const TextStyle(fontSize: 11, color: Colors.white30),
-                          prefixIcon: const Icon(Icons.search, size: 14),
+                              TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                          prefixIcon: Icon(Icons.search, size: 14, color: AppTheme.textMuted),
                           suffixIcon: _searchQuery.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Icons.clear, size: 12),
+                                  icon: Icon(Icons.clear, size: 12, color: AppTheme.textSecondary),
                                   onPressed: () {
                                     _searchController.clear();
                                     setState(() => _searchQuery = '');
@@ -140,6 +140,7 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
                   FilledButton.icon(
                     style: FilledButton.styleFrom(
                       backgroundColor: AppTheme.primary,
+                      foregroundColor: Colors.white,
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
@@ -174,7 +175,7 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
                 controller: _tabController,
                 indicatorColor: AppTheme.primaryLight,
                 labelColor: AppTheme.primaryLight,
-                unselectedLabelColor: Colors.white60,
+                unselectedLabelColor: AppTheme.textSecondary,
                 labelStyle:
                     const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                 tabs: [
@@ -195,13 +196,13 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.wifi_tethering_off,
-                                    size: 40, color: Colors.white24),
+                                Icon(Icons.wifi_tethering_off,
+                                    size: 40, color: AppTheme.textMuted),
                                 const SizedBox(height: 8),
-                                const Text(
+                                Text(
                                   'No discovered nodes found',
                                   style: TextStyle(
-                                      fontSize: 12, color: Colors.white60),
+                                      fontSize: 12, color: AppTheme.textSecondary),
                                 ),
                                 const SizedBox(height: 4),
                                 TextButton.icon(
@@ -216,23 +217,25 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
                         : ListView.separated(
                             itemCount: discovered.length,
                             separatorBuilder: (context, index) =>
-                                const Divider(height: 1, color: AppTheme.border),
+                                Divider(height: 1, color: AppTheme.border),
                             itemBuilder: (ctx, idx) {
                               final node = discovered[idx];
                               return ListTile(
                                 dense: true,
                                 visualDensity: VisualDensity.compact,
-                                leading: const Icon(Icons.dns_outlined,
+                                leading: Icon(Icons.dns_outlined,
                                     color: AppTheme.primaryLight, size: 20),
                                 title: Text(
                                   node.displayName,
-                                  style: const TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.textPrimary),
                                 ),
                                 subtitle: Text(
                                   'Port: ${node.port} • Type: ${node.discoveryType}${node.latencyMs != null ? " • Latency: ${node.latencyMs}ms" : ""}',
-                                  style: const TextStyle(
-                                      fontSize: 10.5, color: Colors.white54),
+                                  style: TextStyle(
+                                      fontSize: 10.5, color: AppTheme.textSecondary),
                                 ),
                                 trailing: FilledButton.tonal(
                                   style: FilledButton.styleFrom(
@@ -253,29 +256,30 @@ class _DeviceLibraryDialogState extends State<DeviceLibraryDialog>
 
                     // Historical Targets
                     historyList.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Text(
                               'No historical targets recorded yet',
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.white60),
+                                  fontSize: 12, color: AppTheme.textSecondary),
                             ),
                           )
                         : ListView.separated(
                             itemCount: historyList.length,
                             separatorBuilder: (context, index) =>
-                                const Divider(height: 1, color: AppTheme.border),
+                                Divider(height: 1, color: AppTheme.border),
                             itemBuilder: (ctx, idx) {
                               final entry = historyList[idx];
                               return ListTile(
                                 dense: true,
                                 visualDensity: VisualDensity.compact,
-                                leading: const Icon(Icons.history,
-                                    color: Colors.white60, size: 20),
+                                leading: Icon(Icons.history,
+                                    color: AppTheme.textSecondary, size: 20),
                                 title: Text(
                                   '${entry.key}:${entry.value}',
                                   style: AppTheme.monoStyle(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.textPrimary),
                                 ),
                                 trailing: FilledButton.tonal(
                                   style: FilledButton.styleFrom(

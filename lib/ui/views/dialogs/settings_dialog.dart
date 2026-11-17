@@ -1,5 +1,5 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 import 'package:net_bench/ui/view_models/benchmark_view_model.dart';
 import 'package:net_bench/ui/views/dialogs/installation_guide_dialog.dart';
@@ -54,24 +54,32 @@ class _SettingsDialogState extends State<SettingsDialog> {
         backgroundColor: AppTheme.surfaceHigh,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: const BorderSide(color: AppTheme.border),
+          side: BorderSide(color: AppTheme.border),
         ),
-        title: const Text(
+        title: Text(
           'Purge All History?',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
         ),
-        content: const Text(
+        content: Text(
           'This action will permanently delete all historical benchmark runs from local database storage. This action cannot be undone.',
-          style: TextStyle(fontSize: 12, color: Colors.white70),
+          style: TextStyle(fontSize: 12, color: AppTheme.textPrimary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('CANCEL', style: TextStyle(fontSize: 11, color: Colors.white60)),
+            child: Text(
+              'CANCEL',
+              style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppTheme.error,
+              foregroundColor: Colors.white,
               visualDensity: VisualDensity.compact,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -95,7 +103,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       backgroundColor: AppTheme.surfaceHigh,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: AppTheme.border),
+        side: BorderSide(color: AppTheme.border),
       ),
       child: Container(
         width: 540,
@@ -120,31 +128,31 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'APPLICATION SETTINGS',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
-                    color: Colors.white,
+                    color: AppTheme.textPrimary,
                   ),
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 16),
+                  icon: Icon(Icons.close, size: 16, color: AppTheme.textSecondary),
                   onPressed: () => Navigator.of(context).pop(),
                   visualDensity: VisualDensity.compact,
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'IPERF3 EXECUTABLE PATH',
               style: TextStyle(
                 fontSize: 10.5,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
-                color: Colors.white70,
+                color: AppTheme.textSecondary,
               ),
             ),
             const SizedBox(height: 6),
@@ -153,12 +161,12 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 Expanded(
                   child: TextField(
                     controller: _pathController,
-                    style: AppTheme.monoStyle(fontSize: 11),
+                    style: AppTheme.monoStyle(fontSize: 11, color: AppTheme.textPrimary),
                     decoration: InputDecoration(
                       hintText: 'e.g. C:\\Program Files\\iperf3\\iperf3.exe',
-                      hintStyle: const TextStyle(fontSize: 11, color: Colors.white24),
+                      hintStyle: TextStyle(fontSize: 11, color: AppTheme.textMuted),
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear, size: 13),
+                        icon: Icon(Icons.clear, size: 13, color: AppTheme.textSecondary),
                         onPressed: () {
                           _pathController.clear();
                           widget.viewModel.updateCustomBinaryPath('');
@@ -173,8 +181,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white70,
-                    side: const BorderSide(color: AppTheme.border),
+                    foregroundColor: AppTheme.textPrimary,
+                    side: BorderSide(color: AppTheme.border),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     visualDensity: VisualDensity.compact,
                   ),
@@ -198,7 +206,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   Expanded(
                     child: Text(
                       info.version!,
-                      style: AppTheme.monoStyle(fontSize: 10.5, color: Colors.white60),
+                      style: AppTheme.monoStyle(fontSize: 10.5, color: AppTheme.textSecondary),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -235,13 +243,13 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.lightbulb_outline,
+                    Icon(Icons.lightbulb_outline,
                         size: 15, color: AppTheme.primaryLight),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Tip: On Windows, install in seconds via PowerShell: winget install iperf3',
-                        style: TextStyle(fontSize: 10.5, color: Colors.white70),
+                        style: TextStyle(fontSize: 10.5, color: AppTheme.textPrimary),
                       ),
                     ),
                     TextButton(
@@ -272,15 +280,15 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppTheme.warning.withValues(alpha: 0.4)),
                 ),
-                child: const Row(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(Icons.security_update_warning, size: 16, color: AppTheme.warning),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Security Advisory: Detected iPerf3 version is older than 3.19.1. Older versions contain known memory vulnerabilities (e.g. CVE-2023-38403) when running as a server. Upgrading is strongly recommended.',
-                        style: TextStyle(fontSize: 11, color: Colors.white70),
+                        style: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
                       ),
                     ),
                   ],
@@ -293,13 +301,17 @@ class _SettingsDialogState extends State<SettingsDialog> {
             // Simulation / Demo Mode Toggle
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text(
+              title: Text(
                 'Demo / Simulation Mode',
-                style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.textPrimary,
+                ),
               ),
-              subtitle: const Text(
+              subtitle: Text(
                 'Generate realistic real-time benchmark streaming data without requiring an external iPerf3 server.',
-                style: TextStyle(fontSize: 11, color: Colors.white60),
+                style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
               ),
               value: widget.viewModel.isDemoMode,
               activeThumbColor: AppTheme.primary,
@@ -326,6 +338,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 FilledButton(
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.primary,
+                    foregroundColor: Colors.white,
                     visualDensity: VisualDensity.compact,
                   ),
                   onPressed: () {

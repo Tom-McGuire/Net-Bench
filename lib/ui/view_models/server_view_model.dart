@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/data/repositories/benchmark_repository.dart';
 import 'package:net_bench/domain/models/launch_adapter_config.dart';
 import 'package:net_bench/domain/models/network_adapter.dart';
@@ -16,6 +16,7 @@ class ServerViewModel extends ChangeNotifier {
   final BenchmarkRepository repository;
   final LaunchAdapterConfig? initialAdapterConfig;
   bool _startupAdapterApplied = false;
+  bool _isDisposed = false;
   ServerState _state = const ServerState();
   StreamSubscription<ServerState>? _stateSub;
 
@@ -106,7 +107,14 @@ class ServerViewModel extends ChangeNotifier {
   }
 
   @override
+  void notifyListeners() {
+    if (_isDisposed) return;
+    super.notifyListeners();
+  }
+
+  @override
   void dispose() {
+    _isDisposed = true;
     _stateSub?.cancel();
     super.dispose();
   }

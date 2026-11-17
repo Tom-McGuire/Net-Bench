@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/domain/models/discovered_node.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 
@@ -32,16 +32,16 @@ class DiscoveredNodesBar extends StatelessWidget {
           Icon(
             Icons.radar,
             size: 14,
-            color: isScanning ? AppTheme.primaryLight : Colors.white60,
+            color: isScanning ? AppTheme.primaryLight : AppTheme.textSecondary,
           ),
           const SizedBox(width: 8),
-          const Text(
+          Text(
             'SUBNET DISCOVERY',
             style: TextStyle(
               fontSize: 10.5,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
-              color: Colors.white70,
+              color: AppTheme.textSecondary,
             ),
           ),
           const SizedBox(width: 12),
@@ -54,7 +54,7 @@ class DiscoveredNodesBar extends StatelessWidget {
                         : 'No remote servers found. Click "Scan Subnet" to search LAN.',
                     style: TextStyle(
                       fontSize: 11,
-                      color: isScanning ? AppTheme.primaryLight : Colors.white38,
+                      color: isScanning ? AppTheme.primaryLight : AppTheme.textMuted,
                       fontStyle: FontStyle.italic,
                     ),
                   )
@@ -92,7 +92,7 @@ class DiscoveredNodesBar extends StatelessWidget {
                                     size: 11,
                                     color: isSelected
                                         ? AppTheme.primaryLight
-                                        : Colors.white60,
+                                        : AppTheme.textSecondary,
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
@@ -103,8 +103,8 @@ class DiscoveredNodesBar extends StatelessWidget {
                                           ? FontWeight.bold
                                           : FontWeight.normal,
                                       color: isSelected
-                                          ? Colors.white
-                                          : Colors.white70,
+                                          ? AppTheme.textPrimary
+                                          : AppTheme.textSecondary,
                                     ),
                                   ),
                                   if (node.latencyMs != null) ...[
@@ -132,14 +132,14 @@ class DiscoveredNodesBar extends StatelessWidget {
             height: 26,
             child: OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white70,
-                side: const BorderSide(color: AppTheme.border),
+                foregroundColor: AppTheme.textPrimary,
+                side: BorderSide(color: AppTheme.border),
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 visualDensity: VisualDensity.compact,
               ),
               onPressed: isScanning ? null : onScanTriggered,
               icon: isScanning
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 12,
                       height: 12,
                       child: CircularProgressIndicator(

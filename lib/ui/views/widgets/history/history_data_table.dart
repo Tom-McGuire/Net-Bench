@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:net_bench/domain/models/benchmark_result.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
@@ -51,25 +51,25 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
           padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Icon(
                 Icons.history_toggle_off,
                 size: 48,
-                color: Colors.white24,
+                color: AppTheme.textMuted,
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 'No historical benchmark runs found',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white70,
+                  color: AppTheme.textPrimary,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 'Completed runs will automatically be stored in local SQLite database.',
-                style: TextStyle(fontSize: 12, color: Colors.white38),
+                style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
               ),
             ],
           ),
@@ -101,7 +101,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
                         controller: _verticalController,
                         itemCount: widget.runs.length,
                         separatorBuilder: (context, index) =>
-                            const Divider(height: 1, color: AppTheme.border),
+                            Divider(height: 1, color: AppTheme.border),
                         itemBuilder: (context, index) {
                           final run = widget.runs[index];
                           final isInspecting =
@@ -132,7 +132,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
       height: 32,
       color: AppTheme.surfaceHighest,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: const Row(
+      child: Row(
         children: [
           SizedBox(width: 32, child: Center(child: Text('#', style: _headerStyle))),
           SizedBox(width: 145, child: Text('TIMESTAMP', style: _headerStyle)),
@@ -185,7 +185,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
               width: 145,
               child: Text(
                 _dateFormat.format(run.timestamp),
-                style: AppTheme.monoStyle(fontSize: 11, color: Colors.white70),
+                style: AppTheme.monoStyle(fontSize: 11, color: AppTheme.textSecondary),
               ),
             ),
             // Profile Name
@@ -193,10 +193,10 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
               width: 140,
               child: Text(
                 run.profileName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: AppTheme.textPrimary,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -220,7 +220,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
                 '${run.protocol.toUpperCase()} (${run.streams}P)',
                 style: AppTheme.monoStyle(
                   fontSize: 11,
-                  color: Colors.white60,
+                  color: AppTheme.textSecondary,
                 ),
               ),
             ),
@@ -234,7 +234,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
                 style: AppTheme.monoStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppTheme.textPrimary,
                 ),
               ),
             ),
@@ -262,7 +262,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
                         : '-'),
                 style: AppTheme.monoStyle(
                   fontSize: 10.5,
-                  color: run.isUdp ? AppTheme.warning : Colors.white54,
+                  color: run.isUdp ? AppTheme.warning : AppTheme.textSecondary,
                 ),
               ),
             ),
@@ -273,7 +273,7 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
                 run.retransmits.toString(),
                 style: AppTheme.monoStyle(
                   fontSize: 11,
-                  color: run.retransmits > 5 ? AppTheme.warning : Colors.white60,
+                  color: run.retransmits > 5 ? AppTheme.warning : AppTheme.textSecondary,
                 ),
               ),
             ),
@@ -296,27 +296,33 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
             SizedBox(
               width: 58,
               child: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert, size: 14, color: Colors.white60),
+                icon: Icon(Icons.more_vert, size: 14, color: AppTheme.textSecondary),
                 padding: EdgeInsets.zero,
-                color: AppTheme.surfaceHigh,
+                color: AppTheme.surfaceElevated,
                 onSelected: (val) {
                   if (val == 'csv') widget.onExportCsv(run);
                   if (val == 'json') widget.onExportJson(run);
                   if (val == 'delete') widget.onDeleteRun(run.id);
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'csv',
                     height: 28,
-                    child: Text('Export CSV', style: TextStyle(fontSize: 11)),
+                    child: Text(
+                      'Export CSV',
+                      style: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
+                    ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'json',
                     height: 28,
-                    child: Text('Export JSON', style: TextStyle(fontSize: 11)),
+                    child: Text(
+                      'Export JSON',
+                      style: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
+                    ),
                   ),
                   const PopupMenuDivider(height: 1),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     height: 28,
                     child: Text('Delete Run',
@@ -331,10 +337,10 @@ class _HistoryDataTableState extends State<HistoryDataTable> {
     );
   }
 
-  static const TextStyle _headerStyle = TextStyle(
-    fontSize: 10,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 0.5,
-    color: Colors.white70,
-  );
+  TextStyle get _headerStyle => TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.5,
+        color: AppTheme.textSecondary,
+      );
 }

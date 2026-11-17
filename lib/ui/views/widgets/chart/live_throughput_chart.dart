@@ -1,5 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/domain/models/live_sample.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 
@@ -40,9 +40,9 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
                   size: 40,
                   color: AppTheme.primaryLight.withValues(alpha: 0.3)),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Throughput waveform will stream here during benchmark',
-                style: TextStyle(fontSize: 12, color: Colors.white38),
+                style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
               ),
             ],
           ),
@@ -92,15 +92,15 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
         children: [
           Row(
             children: [
-              const Icon(Icons.area_chart, size: 14, color: AppTheme.primaryLight),
+              Icon(Icons.area_chart, size: 14, color: AppTheme.primaryLight),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'LIVE BANDWIDTH & LATENCY TREND',
                 style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
-                  color: Colors.white70,
+                  color: AppTheme.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -116,8 +116,9 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     child: _legendDot(
-                      _showSecondaryMetric ? AppTheme.warning : Colors.white24,
+                      _showSecondaryMetric ? AppTheme.warning : AppTheme.textMuted,
                       secondaryLabel,
+                      isActive: _showSecondaryMetric,
                     ),
                   ),
                 ),
@@ -138,12 +139,12 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
                   show: true,
                   drawVerticalLine: true,
                   horizontalInterval: maxY > 200 ? (maxY / 4).roundToDouble() : 50,
-                  getDrawingHorizontalLine: (value) => const FlLine(
-                    color: Color(0xFF262626),
+                  getDrawingHorizontalLine: (value) => FlLine(
+                    color: AppTheme.border,
                     strokeWidth: 1,
                   ),
-                  getDrawingVerticalLine: (value) => const FlLine(
-                    color: Color(0xFF262626),
+                  getDrawingVerticalLine: (value) => FlLine(
+                    color: AppTheme.border,
                     strokeWidth: 1,
                   ),
                 ),
@@ -161,7 +162,7 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
                                 : '${value.toInt()}M',
                             style: AppTheme.monoStyle(
                               fontSize: 9.5,
-                              color: Colors.white38,
+                              color: AppTheme.textMuted,
                             ),
                             textAlign: TextAlign.right,
                           ),
@@ -179,7 +180,7 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
                             '${value.toInt()}s',
                             style: AppTheme.monoStyle(
                               fontSize: 9.5,
-                              color: Colors.white38,
+                              color: AppTheme.textMuted,
                             ),
                           );
                         }
@@ -200,7 +201,7 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
                 ),
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (touchedSpot) => const Color(0xFF22272E),
+                    getTooltipColor: (touchedSpot) => AppTheme.surfaceElevated,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((barSpot) {
                         final isPrimary = barSpot.barIndex == 0;
@@ -262,7 +263,7 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
     );
   }
 
-  Widget _legendDot(Color color, String label) {
+  Widget _legendDot(Color color, String label, {bool isActive = true}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -276,7 +277,7 @@ class _LiveThroughputChartState extends State<LiveThroughputChart> {
           label,
           style: TextStyle(
             fontSize: 10,
-            color: color == Colors.white24 ? Colors.white30 : Colors.white70,
+            color: isActive ? AppTheme.textSecondary : AppTheme.textMuted,
           ),
         ),
       ],

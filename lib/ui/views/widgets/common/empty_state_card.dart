@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 
 class EmptyStateCard extends StatelessWidget {
@@ -37,10 +37,10 @@ class EmptyStateCard extends StatelessWidget {
             const SizedBox(height: 14),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppTheme.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -49,9 +49,9 @@ class EmptyStateCard extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 420),
               child: Text(
                 subtitle,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white60,
+                  color: AppTheme.textSecondary,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -79,8 +79,8 @@ class EmptyStateCard extends StatelessWidget {
                 if (secondaryActionLabel != null && onSecondaryAction != null)
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white70,
-                      side: const BorderSide(color: AppTheme.border),
+                      foregroundColor: AppTheme.textPrimary,
+                      side: BorderSide(color: AppTheme.border),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),

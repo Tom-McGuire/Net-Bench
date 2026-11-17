@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 
@@ -33,7 +33,7 @@ class _CommandPreviewCardState extends State<CommandPreviewCard> {
       decoration: BoxDecoration(
         color: AppTheme.commandBg,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF30363D)),
+        border: Border.all(color: AppTheme.border),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
@@ -42,15 +42,15 @@ class _CommandPreviewCardState extends State<CommandPreviewCard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.terminal, size: 14, color: AppTheme.primaryLight),
+              Icon(Icons.terminal, size: 14, color: AppTheme.primaryLight),
               const SizedBox(width: 8),
               Text(
                 widget.title.toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
-                  color: Colors.white70,
+                  color: AppTheme.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -64,7 +64,7 @@ class _CommandPreviewCardState extends State<CommandPreviewCard> {
                       Icon(
                         _copied ? Icons.check : Icons.copy,
                         size: 12,
-                        color: _copied ? AppTheme.success : Colors.white60,
+                        color: _copied ? AppTheme.success : AppTheme.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -72,7 +72,7 @@ class _CommandPreviewCardState extends State<CommandPreviewCard> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: _copied ? AppTheme.success : Colors.white60,
+                          color: _copied ? AppTheme.success : AppTheme.textSecondary,
                         ),
                       ),
                     ],
@@ -86,7 +86,7 @@ class _CommandPreviewCardState extends State<CommandPreviewCard> {
             widget.command,
             style: AppTheme.monoStyle(
               fontSize: 11.5,
-              color: const Color(0xFFE6EDF3),
+              color: AppTheme.codeText,
             ),
           ),
         ],

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/domain/models/network_adapter.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 import 'package:net_bench/ui/view_models/server_view_model.dart';
@@ -89,15 +89,15 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.dns, size: 16, color: AppTheme.primaryLight),
+                Icon(Icons.dns, size: 16, color: AppTheme.primaryLight),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'LOCAL IPERF3 SERVER DAEMON',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
-                    color: Colors.white,
+                    color: AppTheme.textPrimary,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -105,12 +105,12 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                   label: isRunning
                       ? (state.isSimulated ? 'LISTENING (DEMO)' : 'LISTENING')
                       : 'STOPPED',
-                  color: isRunning ? AppTheme.success : Colors.white38,
+                  color: isRunning ? AppTheme.success : AppTheme.textMuted,
                   icon: isRunning ? Icons.check_circle : Icons.stop_circle_outlined,
                 ),
                 if (widget.isOlderThan3191) ...[
                   const SizedBox(width: 8),
-                  const StatusBadge(
+                  StatusBadge(
                     label: 'iPerf < 3.19.1 (Vulnerable)',
                     color: AppTheme.warning,
                     icon: Icons.security_update_warning,
@@ -129,7 +129,7 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.settings_ethernet,
+                            Icon(Icons.settings_ethernet,
                                 size: 14, color: AppTheme.primaryLight),
                             const SizedBox(width: 6),
                             DropdownButtonHideUnderline(
@@ -155,8 +155,8 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.refresh,
-                                  size: 13, color: Colors.white60),
+                              icon: Icon(Icons.refresh,
+                                  size: 13, color: AppTheme.textSecondary),
                               tooltip: 'Refresh network adapters',
                               padding: EdgeInsets.zero,
                               constraints:
@@ -184,9 +184,9 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                                     },
                               visualDensity: VisualDensity.compact,
                             ),
-                            const Text(
+                            Text(
                               'One-off (-1)',
-                              style: TextStyle(fontSize: 11, color: Colors.white70),
+                              style: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
                             ),
                           ],
                         ),
@@ -249,12 +249,12 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.error_outline, size: 16, color: AppTheme.error),
+                  Icon(Icons.error_outline, size: 16, color: AppTheme.error),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       state.error!,
-                      style: const TextStyle(fontSize: 11, color: Colors.white),
+                      style: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
                     ),
                   ),
                 ],
@@ -272,15 +272,15 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                 border: Border.all(
                     color: AppTheme.warning.withValues(alpha: 0.4)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
                   Icon(Icons.warning_amber_rounded,
                       size: 14, color: AppTheme.warning),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       'Binding to 0.0.0.0 exposes the server port to all devices across all network interfaces without authentication.',
-                      style: TextStyle(fontSize: 10.5, color: Colors.white70),
+                      style: TextStyle(fontSize: 10.5, color: AppTheme.textPrimary),
                     ),
                   ),
                 ],
@@ -298,14 +298,14 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.shield_outlined,
+                  Icon(Icons.shield_outlined,
                       size: 14, color: AppTheme.primaryLight),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       'Bound exclusively to ${selectedAdapter.displayName}. Only traffic arriving on this network adapter will be accepted.',
-                      style: const TextStyle(
-                          fontSize: 10.5, color: Colors.white70),
+                      style: TextStyle(
+                          fontSize: 10.5, color: AppTheme.textPrimary),
                     ),
                   ),
                 ],
@@ -325,12 +325,12 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(
                 children: [
-                  const Text(
+                  Text(
                     'CONNECTED CLIENTS: ',
                     style: TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white38,
+                      color: AppTheme.textMuted,
                     ),
                   ),
                   ...state.activeClients.map((client) => Padding(
@@ -356,13 +356,13 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
               ),
             ),
           // Terminal Logs
-          const Text(
+          Text(
             'DAEMON LOG STREAM',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
-              color: Colors.white38,
+              color: AppTheme.textMuted,
             ),
           ),
           const SizedBox(height: 6),
@@ -371,7 +371,7 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF0D1117),
+                color: AppTheme.commandBg,
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: AppTheme.border),
               ),
@@ -380,16 +380,16 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.dns_outlined,
-                              size: 28, color: Colors.white24),
+                          Icon(Icons.dns_outlined,
+                              size: 28, color: AppTheme.textMuted),
                           const SizedBox(height: 8),
                           Text(
                             widget.binaryPath != null
                                 ? 'Server daemon is idle. Click "START SERVER" to listen for incoming tests.'
                                 : 'Click "START SERVER" to run a simulated server daemon, or install native iPerf3 for real testing.',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 11, color: Colors.white38),
+                            style: TextStyle(
+                                fontSize: 11, color: AppTheme.textMuted),
                           ),
                           if (widget.binaryPath == null) ...[
                             const SizedBox(height: 10),
@@ -400,7 +400,7 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.primaryLight,
-                                side: const BorderSide(color: AppTheme.primary),
+                                side: BorderSide(color: AppTheme.primary),
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               ),
                             ),
@@ -420,7 +420,7 @@ class _ServerMonitorCardState extends State<ServerMonitorCard> {
                                 ? AppTheme.error
                                 : (line.startsWith('[SERVER')
                                     ? AppTheme.primaryLight
-                                    : const Color(0xFFC9D1D9)),
+                                    : AppTheme.codeText),
                           ),
                         );
                       },

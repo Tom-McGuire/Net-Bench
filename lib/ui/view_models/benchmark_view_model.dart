@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../data/repositories/benchmark_repository.dart';
 import '../../data/services/iperf/iperf_binary_service.dart';
 import '../../domain/models/benchmark_config.dart';
@@ -30,6 +30,7 @@ class BenchmarkViewModel extends ChangeNotifier {
   // Execution State
   bool _isRunning = false;
   bool _isDemoMode = false;
+  bool _isDemoWalkthroughActive = false;
   LiveSample? _currentSample;
   final List<LiveSample> _liveSamples = [];
   StreamSubscription<LiveSample>? _sampleSub;
@@ -68,6 +69,7 @@ class BenchmarkViewModel extends ChangeNotifier {
   BenchmarkPreset? get selectedPreset => _selectedPreset;
   bool get isRunning => _isRunning;
   bool get isDemoMode => _isDemoMode;
+  bool get isDemoWalkthroughActive => _isDemoWalkthroughActive;
   IPerfBinaryInfo get binaryInfo => repository.binaryInfo;
 
   LiveSample? get currentSample => _currentSample;
@@ -118,8 +120,10 @@ class BenchmarkViewModel extends ChangeNotifier {
       _discoveredNodes = repository.currentDiscoveredNodes;
 
       _nodesSub = repository.discoveredNodesStream.listen((nodes) {
-        _discoveredNodes = nodes;
-        notifyListeners();
+        if (!_isDemoWalkthroughActive) {
+          _discoveredNodes = nodes;
+          notifyListeners();
+        }
       });
 
       final savedBinaryPath = repository.dbService.getSetting('custom_binary_path');
@@ -127,9 +131,6 @@ class BenchmarkViewModel extends ChangeNotifier {
         await updateCustomBinaryPath(savedBinaryPath);
       }
 
-      if (!repository.binaryInfo.isAvailable) {
-        _isDemoMode = true;
-      }
       loadAdapters();
     } catch (_) {}
     notifyListeners();
@@ -219,10 +220,213 @@ class BenchmarkViewModel extends ChangeNotifier {
   }
 
   void setDemoMode(bool enabled) {
+    if (!enabled && _isDemoWalkthroughActive) {
+      endDemoWalkthrough();
+      return;
+    }
     _isDemoMode = enabled;
     _config = _config.copyWith(isDemoMode: enabled);
     notifyListeners();
   }
+
+  /// Populates realistic in-memory benchmark telemetry and launches the
+  /// interactive spotlight walkthrough without writing to SQLite or Shared DB.
+  void startDemoWalkthrough() {
+    if (_isRunning) return;
+
+    _isDemoMode = true;
+    _isDemoWalkthroughActive = true;
+    _validationError = null;
+    _searchQuery = '';
+    _protocolFilter = 'ALL';
+    _inspectorTabIndex = 0;
+    _config = _config.copyWith(
+      isDemoMode: true,
+      targetHost: '192.168.1.10',
+      port: 5201,
+    );
+
+    final demoSamples = <LiveSample>[
+      const LiveSample(
+        interval: 1,
+        secondsElapsed: 1.0,
+        throughputMbps: 915.4,
+        perStreamMbps: {1: 229.1, 2: 228.5, 3: 229.0, 4: 228.8},
+        retransmits: 0,
+        pingRttMs: 4.2,
+      ),
+      const LiveSample(
+        interval: 2,
+        secondsElapsed: 2.0,
+        throughputMbps: 932.8,
+        perStreamMbps: {1: 233.5, 2: 232.9, 3: 233.1, 4: 233.3},
+        retransmits: 0,
+        pingRttMs: 4.6,
+      ),
+      const LiveSample(
+        interval: 3,
+        secondsElapsed: 3.0,
+        throughputMbps: 948.1,
+        perStreamMbps: {1: 237.2, 2: 236.8, 3: 237.0, 4: 237.1},
+        retransmits: 1,
+        pingRttMs: 5.4,
+      ),
+      const LiveSample(
+        interval: 4,
+        secondsElapsed: 4.0,
+        throughputMbps: 956.3,
+        perStreamMbps: {1: 239.1, 2: 238.9, 3: 239.2, 4: 239.1},
+        retransmits: 0,
+        pingRttMs: 5.9,
+      ),
+      const LiveSample(
+        interval: 5,
+        secondsElapsed: 5.0,
+        throughputMbps: 941.0,
+        perStreamMbps: {1: 235.4, 2: 235.1, 3: 235.3, 4: 235.2},
+        retransmits: 0,
+        pingRttMs: 4.9,
+      ),
+      const LiveSample(
+        interval: 6,
+        secondsElapsed: 6.0,
+        throughputMbps: 964.2,
+        perStreamMbps: {1: 241.2, 2: 240.8, 3: 241.1, 4: 241.1},
+        retransmits: 0,
+        pingRttMs: 6.8,
+      ),
+      const LiveSample(
+        interval: 7,
+        secondsElapsed: 7.0,
+        throughputMbps: 949.5,
+        perStreamMbps: {1: 237.5, 2: 237.3, 3: 237.4, 4: 237.3},
+        retransmits: 1,
+        pingRttMs: 5.6,
+      ),
+      const LiveSample(
+        interval: 8,
+        secondsElapsed: 8.0,
+        throughputMbps: 936.7,
+        perStreamMbps: {1: 234.2, 2: 234.1, 3: 234.3, 4: 234.1},
+        retransmits: 0,
+        pingRttMs: 4.8,
+      ),
+      const LiveSample(
+        interval: 9,
+        secondsElapsed: 9.0,
+        throughputMbps: 928.9,
+        perStreamMbps: {1: 232.3, 2: 232.2, 3: 232.1, 4: 232.3},
+        retransmits: 0,
+        pingRttMs: 4.5,
+      ),
+      const LiveSample(
+        interval: 10,
+        secondsElapsed: 10.0,
+        throughputMbps: 945.1,
+        perStreamMbps: {1: 236.4, 2: 236.2, 3: 236.3, 4: 236.2},
+        retransmits: 0,
+        pingRttMs: 4.5,
+      ),
+    ];
+
+    _liveSamples
+      ..clear()
+      ..addAll(demoSamples);
+    _currentSample = _liveSamples.last;
+
+    final now = DateTime.now();
+    final demoRun1 = BenchmarkResult(
+      id: 'demo-run-1',
+      timestamp: now.subtract(const Duration(minutes: 4)),
+      profileName: '1G Full-Duplex',
+      targetHost: '192.168.1.10',
+      port: 5201,
+      protocol: 'tcp',
+      direction: 'bidirectional',
+      streams: 4,
+      durationSeconds: 10,
+      avgThroughputMbps: 941.8,
+      peakThroughputMbps: 964.2,
+      minThroughputMbps: 892.0,
+      totalBytes: 1177250000,
+      retransmits: 2,
+      baselinePingMs: 2.1,
+      loadedPingMs: 4.5,
+      bufferbloatDeltaMs: 2.4,
+      samples: List.of(_liveSamples),
+      rawJson:
+          '{"start":{"connected":[{"socket":5,"local_host":"192.168.1.50","remote_host":"192.168.1.10","remote_port":5201}],"test_start":{"protocol":"TCP","num_streams":4,"blksize":131072,"duration":10}},"end":{"sum_sent":{"bytes":1177250000,"bits_per_second":941800000,"retransmits":2},"sum_received":{"bytes":1176500000,"bits_per_second":941200000}}}',
+    );
+
+    final demoRun2 = BenchmarkResult(
+      id: 'demo-run-2',
+      timestamp: now.subtract(const Duration(minutes: 12)),
+      profileName: 'UDP Jitter Check',
+      targetHost: '192.168.1.10',
+      port: 5201,
+      protocol: 'udp',
+      direction: 'upload',
+      streams: 1,
+      durationSeconds: 10,
+      avgThroughputMbps: 498.4,
+      peakThroughputMbps: 500.0,
+      minThroughputMbps: 495.1,
+      totalBytes: 623000000,
+      jitterMs: 0.28,
+      lossPercent: 0.02,
+      lostPackets: 8,
+      totalPackets: 40000,
+      rawJson:
+          '{"start":{"connected":[{"socket":6,"local_host":"192.168.1.50","remote_host":"192.168.1.10","remote_port":5201}],"test_start":{"protocol":"UDP","num_streams":1,"duration":10}},"end":{"sum":{"bytes":623000000,"bits_per_second":498400000,"jitter_ms":0.28,"lost_packets":8,"packets":40000,"lost_percent":0.02}}}',
+    );
+
+    _historicalRuns = [demoRun1, demoRun2];
+    _selectedComparisonIds
+      ..clear()
+      ..addAll(['demo-run-1', 'demo-run-2']);
+    _lastCompletedResult = demoRun1;
+    _selectedInspectorRecord = demoRun1;
+    _discoveredNodes = [
+      DiscoveredNode(
+        ip: '192.168.1.10',
+        hostname: 'iperf-core-01',
+        port: 5201,
+        discoveryType: 'peer_beacon',
+        latencyMs: 2,
+        lastSeen: now,
+      ),
+      DiscoveredNode(
+        ip: '192.168.1.25',
+        hostname: 'nas-bench-02',
+        port: 5201,
+        discoveryType: 'tcp_sweep',
+        latencyMs: 3,
+        lastSeen: now,
+      ),
+    ];
+
+    notifyListeners();
+  }
+
+  void loadDemoWalkthroughData() => startDemoWalkthrough();
+
+  /// Ends the interactive walkthrough, exits demo mode, and clears all
+  /// in-memory demo telemetry before restoring persisted history.
+  void endDemoWalkthrough() {
+    _isDemoWalkthroughActive = false;
+    _isDemoMode = false;
+    _config = _config.copyWith(isDemoMode: false);
+    _liveSamples.clear();
+    _currentSample = null;
+    _lastCompletedResult = null;
+    _selectedComparisonIds.clear();
+    _selectedInspectorRecord = null;
+    _inspectorTabIndex = 0;
+    _discoveredNodes = repository.currentDiscoveredNodes;
+    _refreshHistoricalRuns();
+  }
+
+  void clearDemoWalkthroughData() => endDemoWalkthrough();
 
   Future<void> updateCustomBinaryPath(String path) async {
     repository.dbService.setSetting('custom_binary_path', path);
@@ -257,7 +461,7 @@ class BenchmarkViewModel extends ChangeNotifier {
 
     final stream = repository.runBenchmark(
       config: _config,
-      forceDemo: _isDemoMode,
+      forceDemo: _isDemoMode || !repository.binaryInfo.isAvailable,
       onComplete: (result) {
         _isRunning = false;
         _lastCompletedResult = result;

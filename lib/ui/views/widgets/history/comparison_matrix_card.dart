@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/domain/models/benchmark_result.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 
@@ -40,7 +40,7 @@ class ComparisonMatrixCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.compare_arrows, size: 16, color: AppTheme.primaryLight),
+          Icon(Icons.compare_arrows, size: 16, color: AppTheme.primaryLight),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,11 +48,11 @@ class ComparisonMatrixCard extends StatelessWidget {
             children: [
               Text(
                 'COMPARISON MATRIX: ${base.profileName} (${base.targetHost}) vs ${comp.profileName} (${comp.targetHost})',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
-                  color: Colors.white,
+                  color: AppTheme.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
@@ -90,7 +90,7 @@ class ComparisonMatrixCard extends StatelessWidget {
           TextButton.icon(
             style: TextButton.styleFrom(
               visualDensity: VisualDensity.compact,
-              foregroundColor: Colors.white60,
+              foregroundColor: AppTheme.textSecondary,
             ),
             onPressed: onClearComparison,
             icon: const Icon(Icons.close, size: 13),
@@ -115,9 +115,9 @@ class ComparisonMatrixCard extends StatelessWidget {
       children: [
         Text(
           '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 10,
-            color: Colors.white38,
+            color: AppTheme.textMuted,
             fontWeight: FontWeight.bold,
           ),
         ),

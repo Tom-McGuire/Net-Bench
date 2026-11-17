@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
@@ -38,7 +38,10 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Copied: $command'),
+        content: Text(
+          'Copied: $command',
+          style: TextStyle(color: AppTheme.textPrimary),
+        ),
         duration: const Duration(seconds: 2),
         backgroundColor: AppTheme.surfaceHigh,
       ),
@@ -75,7 +78,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
       backgroundColor: AppTheme.surfaceHigh,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: AppTheme.border),
+        side: BorderSide(color: AppTheme.border),
       ),
       child: Container(
         width: 600,
@@ -87,21 +90,21 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
             // Header
             Row(
               children: [
-                const Icon(Icons.download_for_offline,
+                Icon(Icons.download_for_offline,
                     size: 20, color: AppTheme.primaryLight),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'HOW TO INSTALL IPERF3',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
-                    color: Colors.white,
+                    color: AppTheme.textPrimary,
                   ),
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 16),
+                  icon: Icon(Icons.close, size: 16, color: AppTheme.textSecondary),
                   onPressed: () => Navigator.of(context).pop(),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -137,7 +140,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
                         fontSize: 10.5,
                         color: info.isAvailable
                             ? AppTheme.success
-                            : Colors.white60,
+                            : AppTheme.textSecondary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -145,7 +148,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.primaryLight,
-                      side: const BorderSide(color: AppTheme.border),
+                      side: BorderSide(color: AppTheme.border),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 6),
@@ -187,13 +190,14 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'After installing, click "RE-CHECK" above or restart the app.',
-                  style: TextStyle(fontSize: 11, color: Colors.white38),
+                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
                 ),
                 FilledButton(
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.primary,
+                    foregroundColor: Colors.white,
                     visualDensity: VisualDensity.compact,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
@@ -233,7 +237,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
             Icon(
               icon,
               size: 14,
-              color: isSelected ? AppTheme.primaryLight : Colors.white60,
+              color: isSelected ? AppTheme.primaryLight : AppTheme.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
@@ -241,7 +245,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? Colors.white : Colors.white70,
+                color: isSelected ? AppTheme.textPrimary : AppTheme.textSecondary,
               ),
             ),
           ],
@@ -377,10 +381,10 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppTheme.textPrimary,
                 ),
               ),
             ],
@@ -388,14 +392,14 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
           const SizedBox(height: 6),
           Text(
             description,
-            style: const TextStyle(fontSize: 11, color: Colors.white70),
+            style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
           ),
           const SizedBox(height: 6),
           // Command Bar with Copy Button
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1117),
+              color: AppTheme.commandBg,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppTheme.border),
             ),
@@ -406,7 +410,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
                     command,
                     style: AppTheme.monoStyle(
                       fontSize: 11,
-                      color: isUrl ? AppTheme.primaryLight : const Color(0xFF58A6FF),
+                      color: isUrl ? AppTheme.primaryLight : AppTheme.codeText,
                     ),
                   ),
                 ),
@@ -433,7 +437,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
                         Icon(
                           isCopied ? Icons.check : Icons.copy,
                           size: 12,
-                          color: isCopied ? AppTheme.success : Colors.white70,
+                          color: isCopied ? AppTheme.success : AppTheme.textSecondary,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -441,7 +445,7 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: isCopied ? AppTheme.success : Colors.white70,
+                            color: isCopied ? AppTheme.success : AppTheme.textSecondary,
                           ),
                         ),
                       ],
@@ -455,9 +459,9 @@ class _InstallationGuideDialogState extends State<InstallationGuideDialog> {
             const SizedBox(height: 6),
             Text(
               notes,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
-                color: Colors.white38,
+                color: AppTheme.textMuted,
                 height: 1.3,
               ),
             ),

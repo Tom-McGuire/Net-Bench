@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:net_bench/ui/theme/app_theme.dart';
 
 class ThroughputGaugeWidget extends StatelessWidget {
@@ -58,7 +58,7 @@ class ThroughputGaugeWidget extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: AppTheme.textSecondary,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -67,7 +67,7 @@ class ThroughputGaugeWidget extends StatelessWidget {
                 'SCALE: ${effectiveMax >= 1000 ? '${(effectiveMax / 1000).toInt()}G' : '${effectiveMax.toInt()}M'}',
                 style: AppTheme.monoStyle(
                   fontSize: 9.5,
-                  color: Colors.white54,
+                  color: AppTheme.textSecondary,
                 ),
               ),
             ],
@@ -85,6 +85,7 @@ class ThroughputGaugeWidget extends StatelessWidget {
                     value: currentSpeedMbps,
                     peak: peakSpeedMbps,
                     max: effectiveMax,
+                    isDark: AppTheme.isDark,
                   ),
                 ),
                 Positioned(
@@ -97,12 +98,12 @@ class ThroughputGaugeWidget extends StatelessWidget {
                         style: AppTheme.monoStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       Text(
                         displayUnit,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.primaryLight,
@@ -126,7 +127,7 @@ class ThroughputGaugeWidget extends StatelessWidget {
                 value: avgSpeedMbps >= 1000
                     ? '${(avgSpeedMbps / 1000).toStringAsFixed(2)} Gbps'
                     : '${avgSpeedMbps.toStringAsFixed(1)} Mbps',
-                color: Colors.white70,
+                color: AppTheme.textPrimary,
               ),
               _metricPill(
                 label: 'PEAK',
@@ -151,10 +152,10 @@ class ThroughputGaugeWidget extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 9.5,
             fontWeight: FontWeight.bold,
-            color: Colors.white38,
+            color: AppTheme.textMuted,
             letterSpacing: 0.5,
           ),
         ),
@@ -177,11 +178,13 @@ class _GaugePainter extends CustomPainter {
     required this.value,
     required this.peak,
     required this.max,
+    required this.isDark,
   });
 
   final double value;
   final double peak;
   final double max;
+  final bool isDark;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -193,7 +196,7 @@ class _GaugePainter extends CustomPainter {
 
     // 1. Background Arc Track
     final bgPaint = Paint()
-      ..color = const Color(0xFF282828)
+      ..color = AppTheme.surfaceHighest
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round;
@@ -261,7 +264,7 @@ class _GaugePainter extends CustomPainter {
 
     // 4. Tick Marks
     final tickPaint = Paint()
-      ..color = Colors.white24
+      ..color = AppTheme.textMuted
       ..strokeWidth = 1.5;
 
     for (int i = 0; i <= 8; i++) {
@@ -282,6 +285,7 @@ class _GaugePainter extends CustomPainter {
   bool shouldRepaint(covariant _GaugePainter oldDelegate) {
     return oldDelegate.value != value ||
         oldDelegate.peak != peak ||
-        oldDelegate.max != max;
+        oldDelegate.max != max ||
+        oldDelegate.isDark != isDark;
   }
 }
